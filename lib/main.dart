@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_module_login/flutter_module_login.dart';
 import 'package:flutter_module_register/flutter_module_register.dart';
 
-StreamSubscription<bool>? subscription;
+StreamSubscription<bool>? _subscription;
 
 void main() async {
   const chanel = MethodChannel("io.flutter.update.entrypoint");
@@ -25,14 +25,15 @@ Future runAppForRoute(MethodCall call) async {
   final route = call.arguments.toString();
   debugPrint(route);
   if (call.method == "destroy.flutter.app") {
-    subscription?.cancel();
+    _subscription?.cancel();
+    _subscription = null;
     runApp(widgetForRoute(route));
     return Future.value(null);
   }
 
   /// 防止 手速过快 导致 页面混乱 【快闪】 无法一次性进入目标页面
   StreamController<bool> completer = StreamController<bool>();
-  subscription = completer.stream.listen((event) {
+  _subscription = completer.stream.listen((event) {
     runApp(widgetForRoute(route));
   });
   runApp(SplashPage(
