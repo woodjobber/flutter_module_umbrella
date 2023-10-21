@@ -54,14 +54,14 @@ Widget widgetForRoute(String route) {
     UmbrellaModules.splash => const CommandPage(
         key: ValueKey(3),
       ),
-    _ => const EmptyApp(
+    _ => const PlaceholderApp(
         key: ValueKey(4),
       ),
   };
 }
 
-class EmptyApp extends StatelessWidget {
-  const EmptyApp({super.key});
+class PlaceholderApp extends StatelessWidget {
+  const PlaceholderApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +85,10 @@ class SplashPage extends StatelessWidget {
   final bool animated = false;
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 2)).then((value) {
-      completer.sink.add(true);
+    Future.delayed(Duration(seconds: animated ? 7 : 2)).then((value) {
+      if (!completer.isClosed && completer.hasListener) {
+        completer.sink.add(true);
+      }
     });
 
     return MaterialApp(
