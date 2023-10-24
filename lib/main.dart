@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_module_login/flutter_module_login.dart';
 import 'package:flutter_module_register/flutter_module_register.dart';
+import 'package:flutter_module_umbrella/src/injection.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 StreamSubscription<bool>? _subscription;
 
-void main() async {
+void main(List<String> arguments) async {
   const chanel = MethodChannel("io.flutter.update.entrypoint");
   CustomFlutterBinding();
   await initialize();
-
+  await initServices();
   chanel.setMethodCallHandler((call) async {
     return await runAppForRoute(call);
   });
@@ -24,8 +27,8 @@ void main() async {
 Future runAppForRoute(MethodCall call) async {
   final route = call.arguments.toString();
   debugPrint(route);
+  _subscription?.cancel();
   if (call.method == "destroy.flutter.app") {
-    _subscription?.cancel();
     _subscription = null;
     runApp(widgetForRoute(route));
     return Future.value(null);
@@ -36,6 +39,7 @@ Future runAppForRoute(MethodCall call) async {
   _subscription = completer.stream.listen((event) {
     runApp(widgetForRoute(route));
   });
+
   runApp(SplashPage(
     completer: completer,
     key: const ValueKey(100),
@@ -51,13 +55,18 @@ Widget widgetForRoute(String route) {
     UmbrellaModules.register => const RegisterPage(
         key: ValueKey(2),
       ),
-    UmbrellaModules.splash => const CommandPage(
+    UmbrellaModules.splash || UmbrellaModules.intl => const CommandPage(
         key: ValueKey(3),
       ),
     _ => const PlaceholderApp(
         key: ValueKey(4),
       ),
   };
+}
+
+Future<void> initServices() async {
+  await Get.putAsync<Injection>(() async => await Injection().init());
+  await GetStorage.init();
 }
 
 class PlaceholderApp extends StatelessWidget {
@@ -88,10 +97,11 @@ class SplashPage extends StatelessWidget {
     Future.delayed(Duration(seconds: animated ? 7 : 2)).then((value) {
       if (!completer.isClosed && completer.hasListener) {
         completer.sink.add(true);
+        Get.find<Injection>().incrementCounter();
       }
     });
 
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.deepPurple,
@@ -154,4 +164,6 @@ class UmbrellaModules {
   static const login = 'login_module';
   static const register = 'register_module';
   static const splash = 'splash';
+  static const intl = 'intl';
+  static const defaultName = '/';
 }
