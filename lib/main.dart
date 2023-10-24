@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_module_login/flutter_module_login.dart';
 import 'package:flutter_module_register/flutter_module_register.dart';
+import 'package:flutter_module_umbrella/src/base_dio.dart';
+import 'package:flutter_module_umbrella/src/custom_proxy.dart';
 import 'package:flutter_module_umbrella/src/injection.dart';
+import 'package:flutter_module_umbrella/src/object_ext.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -17,10 +21,22 @@ void main(List<String> arguments) async {
   await initialize();
   await initServices();
   chanel.setMethodCallHandler((call) async {
+    /// proxy
+    if (call.method == 'proxy') {
+      final args = call.arguments;
+      final ip = args['ip'].toString();
+      final port = args['port'].toString().toInt() ?? 8888;
+      if (kDebugMode) {
+        // '192.168.1.7'
+        logger.d('PROXY $ip:$port');
+        CustomProxy(ipAddress: ip, port: port).enable();
+        BaseDio.instance().dio.get('http://date.jsontest.com/');
+      }
+      return null;
+    }
     return await runAppForRoute(call);
   });
   final route = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
-
   runApp(widgetForRoute(route));
 }
 

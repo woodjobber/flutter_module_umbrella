@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_module_umbrella/src/auth_interceptor.dart';
+import 'package:flutter_module_umbrella/src/dio_proxy_adapter.dart';
 import 'package:flutter_module_umbrella/src/header_interceptor.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
@@ -9,7 +12,7 @@ class BaseDio {
 
   static final BaseOptions _baseOptions = BaseOptions(
     connectTimeout: const Duration(milliseconds: 50000),
-    receiveTimeout: const Duration(microseconds: 30000),
+    receiveTimeout: const Duration(milliseconds: 30000),
     sendTimeout: const Duration(milliseconds: 30000),
   );
   static final Dio _dio = Dio(_baseOptions)
@@ -22,7 +25,10 @@ class BaseDio {
       compact: true,
     ))
     ..interceptors.add(AuthInterceptor())
-    ..interceptors.add(HeaderInterceptor());
+    ..interceptors.add(HeaderInterceptor())
+    ..useProxy(const bool.fromEnvironment('CHARLES_PROXY_IP')
+        ? const String.fromEnvironment('CHARLES_PROXY_IP')
+        : null);
 
   Dio get dio => _dio;
 
