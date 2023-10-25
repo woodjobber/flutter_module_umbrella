@@ -45,6 +45,7 @@ dependencies:
   flutter_module_register:
     path: ../flutter_module_register
   json_annotation: ^4.8.1
+  webview_flutter: ^4.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

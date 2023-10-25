@@ -10,6 +10,7 @@ import 'package:flutter_module_umbrella/src/base_dio.dart';
 import 'package:flutter_module_umbrella/src/custom_proxy.dart';
 import 'package:flutter_module_umbrella/src/injection.dart';
 import 'package:flutter_module_umbrella/src/object_ext.dart';
+import 'package:flutter_module_umbrella/src/webview_example.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -23,7 +24,7 @@ void main(List<String> arguments) async {
   chanel.setMethodCallHandler((call) async {
     /// proxy
     if (call.method == 'proxy') {
-      final args = call.arguments;
+      Map<String, dynamic> args = call.arguments;
       final ip = args['ip'].toString();
       final port = args['port'].toString().toInt() ?? 8888;
       if (kDebugMode) {
@@ -71,9 +72,10 @@ Widget widgetForRoute(String route) {
     UmbrellaModules.register => const RegisterPage(
         key: ValueKey(2),
       ),
-    UmbrellaModules.splash || UmbrellaModules.intl => const CommandPage(
+    UmbrellaModules.intl => const CommandPage(
         key: ValueKey(3),
       ),
+    UmbrellaModules.splash => const WebViewExample(),
     _ => const PlaceholderApp(
         key: ValueKey(4),
       ),
