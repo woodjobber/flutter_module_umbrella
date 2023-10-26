@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_module_umbrella/src/jsbridge.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewExample extends StatefulWidget {
@@ -33,7 +34,15 @@ class _WebViewExampleState extends State<WebViewExample> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://flutter.dev'));
+      ..runJavaScriptReturningResult('navigator.userAgent').then((value) async {
+        await controller.setUserAgent('$value com.jumei');
+        controller.loadRequest(Uri.parse('http://jumei.com'),
+            headers: {'address': 'beijing'});
+      })
+      ..addJavaScriptChannel('Toaster', onMessageReceived: (message) {
+        // JSBridge.fromMap(jsonDecode(message.message));
+        debugPrint(message.message);
+      });
   }
 
   @override
@@ -54,6 +63,13 @@ class _WebViewExampleState extends State<WebViewExample> {
                 controller.goBack();
               },
               icon: const Icon(Icons.arrow_back_ios),
+            ),
+            IconButton(
+              onPressed: () {
+                controller.runJavaScript(
+                    'Toaster.postMessage("User Agent: " + navigator.userAgent);');
+              },
+              icon: const Icon(Icons.dashboard),
             ),
           ],
         ),

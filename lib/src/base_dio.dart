@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_module_umbrella/src/auth_interceptor.dart';
 import 'package:flutter_module_umbrella/src/dio_proxy_adapter.dart';
@@ -15,6 +13,7 @@ class BaseDio {
     receiveTimeout: const Duration(milliseconds: 30000),
     sendTimeout: const Duration(milliseconds: 30000),
   );
+
   static final Dio _dio = Dio(_baseOptions)
     ..interceptors.add(PrettyDioLogger(
       requestHeader: true,

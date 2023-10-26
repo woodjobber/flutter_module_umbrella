@@ -30,8 +30,8 @@ void main(List<String> arguments) async {
       if (kDebugMode) {
         // '192.168.1.7'
         logger.d('PROXY $ip:$port');
-        CustomProxy(ipAddress: ip, port: port).enable();
-        BaseDio.instance().dio.get('http://date.jsontest.com/');
+        // CustomProxy(ipAddress: ip, port: port).enable();
+        // BaseDio.instance().dio.get('http://date.jsontest.com/');
       }
       return null;
     }
