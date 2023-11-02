@@ -7,9 +7,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_module_login/flutter_module_login.dart';
 import 'package:flutter_module_register/flutter_module_register.dart';
 import 'package:flutter_module_umbrella/src/base_dio.dart';
+import 'package:flutter_module_umbrella/src/clock.dart';
 import 'package:flutter_module_umbrella/src/custom_proxy.dart';
+import 'package:flutter_module_umbrella/src/event_sounds.dart';
 import 'package:flutter_module_umbrella/src/injection.dart';
+import 'package:flutter_module_umbrella/src/lifecycle_listener.dart';
 import 'package:flutter_module_umbrella/src/object_ext.dart';
+import 'package:flutter_module_umbrella/src/pull_to_refresh.dart';
+import 'package:flutter_module_umbrella/src/rive_animation.dart';
+import 'package:flutter_module_umbrella/src/skinning_demo.dart';
+import 'package:flutter_module_umbrella/src/vehicle_demo.dart';
 import 'package:flutter_module_umbrella/src/webview_example.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -19,6 +26,7 @@ StreamSubscription<bool>? _subscription;
 void main(List<String> arguments) async {
   const chanel = MethodChannel("io.flutter.update.entrypoint");
   CustomFlutterBinding();
+  WidgetsFlutterBinding.ensureInitialized();
   await initialize();
   await initServices();
   chanel.setMethodCallHandler((call) async {
@@ -75,7 +83,7 @@ Widget widgetForRoute(String route) {
     UmbrellaModules.intl => const CommandPage(
         key: ValueKey(3),
       ),
-    UmbrellaModules.splash => const WebViewExample(),
+    UmbrellaModules.splash => const ClockApp(),
     _ => const PlaceholderApp(
         key: ValueKey(4),
       ),
