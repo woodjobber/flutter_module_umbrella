@@ -45,23 +45,23 @@ void main(List<String> arguments) async {
         CustomProxy(ipAddress: ip, port: port).enable();
         BaseDio.instance().dio.get('http://date.jsontest.com/');
       }
-      return null;
+      return;
     }
-    return await runAppForRoute(call);
+    return runAppForRoute(call);
   });
   var route = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
   route = PlatformDispatcher.instance.defaultRouteName;
   runApp(widgetForRoute(route));
 }
 
-Future runAppForRoute(MethodCall call) async {
+void runAppForRoute(MethodCall call) async {
   final route = call.arguments.toString();
   debugPrint(route);
   _subscription?.cancel();
   if (call.method == "destroy.flutter.app") {
     _subscription = null;
     runApp(widgetForRoute(route));
-    return Future.value(null);
+    return;
   }
 
   /// 防止 手速过快 导致 页面混乱 【快闪】 无法一次性进入目标页面
@@ -73,7 +73,7 @@ Future runAppForRoute(MethodCall call) async {
     completer: completer,
     key: const ValueKey(100),
   ));
-  return Future.value(null);
+  return;
 }
 
 Widget widgetForRoute(String route) {
@@ -124,6 +124,7 @@ class SplashPage extends StatelessWidget {
 
   const SplashPage({required this.completer, Key? key}) : super(key: key);
   final bool animated = false;
+
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration(seconds: animated ? 5 : 1)).then((value) {
