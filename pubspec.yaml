@@ -46,16 +46,15 @@ dependencies:
     path: ../flutter_module_register
   json_annotation: ^4.8.1
   webview_flutter: ^4.4.1
-  zlbridge_flutter:
-    git:
-      url: https://github.com/woodjobber/zlbridge_flutter.git
+#  zlbridge_flutter:
+#    git:
+#      url: https://github.com/woodjobber/zlbridge_flutter.git
   rive: any
   just_audio: ^0.9.35
   easy_refresh: ^3.3.2+2
   fluttertoast: ^8.2.2
   flutter_easyloading: ^3.0.5
   get_it: ^7.6.4
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

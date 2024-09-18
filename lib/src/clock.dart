@@ -107,11 +107,11 @@ class ClockApp extends StatelessWidget {
       home: const AnimatedClockApp(),
       routes: {
         '/whatever': (c) => Scaffold(
-              appBar: AppBar(title: Text('Whatever')),
+              appBar: AppBar(title: const Text('Whatever')),
               body: Center(
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(c),
-                  child: Text('Return to previous page'),
+                  child: const Text('Return to previous page'),
                 ),
               ),
             )

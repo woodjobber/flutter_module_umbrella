@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:isolate';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/foundation.dart';
@@ -24,6 +26,8 @@ import 'package:get_storage/get_storage.dart';
 StreamSubscription<bool>? _subscription;
 
 void main(List<String> arguments) async {
+  stdout.writeln(
+      "isolate running the 'main' method is called: ${Isolate.current.debugName}");
   const chanel = MethodChannel("io.flutter.update.entrypoint");
   CustomFlutterBinding();
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,14 +42,15 @@ void main(List<String> arguments) async {
       if (kDebugMode) {
         // '192.168.1.7'
         logger.d('PROXY $ip:$port');
-        // CustomProxy(ipAddress: ip, port: port).enable();
-        // BaseDio.instance().dio.get('http://date.jsontest.com/');
+        CustomProxy(ipAddress: ip, port: port).enable();
+        BaseDio.instance().dio.get('http://date.jsontest.com/');
       }
       return null;
     }
     return await runAppForRoute(call);
   });
-  final route = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+  var route = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+  route = PlatformDispatcher.instance.defaultRouteName;
   runApp(widgetForRoute(route));
 }
 
@@ -64,7 +69,6 @@ Future runAppForRoute(MethodCall call) async {
   _subscription = completer.stream.listen((event) {
     runApp(widgetForRoute(route));
   });
-
   runApp(SplashPage(
     completer: completer,
     key: const ValueKey(100),
@@ -73,6 +77,7 @@ Future runAppForRoute(MethodCall call) async {
 }
 
 Widget widgetForRoute(String route) {
+  stdout.writeln("isolate running the 'route' method is called: $route");
   return switch (route) {
     UmbrellaModules.login => const LoginPage(
         key: ValueKey(1),
@@ -84,6 +89,7 @@ Widget widgetForRoute(String route) {
         key: ValueKey(3),
       ),
     UmbrellaModules.splash => const ClockApp(),
+    UmbrellaModules.defaultName => const LoginPage(),
     _ => const PlaceholderApp(
         key: ValueKey(4),
       ),
@@ -105,7 +111,7 @@ class PlaceholderApp extends StatelessWidget {
       home: Scaffold(
         body: Material(
           child: Container(
-            color: Colors.red,
+            color: Colors.white,
           ),
         ),
       ),
@@ -120,7 +126,7 @@ class SplashPage extends StatelessWidget {
   final bool animated = false;
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: animated ? 7 : 2)).then((value) {
+    Future.delayed(Duration(seconds: animated ? 5 : 1)).then((value) {
       if (!completer.isClosed && completer.hasListener) {
         completer.sink.add(true);
         Get.find<Injection>().incrementCounter();
@@ -145,11 +151,11 @@ class SplashPage extends StatelessWidget {
                     size: 100,
                   ),
                 ),
-                const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.orangeAccent,
-                  ),
-                ),
+                // const Center(
+                //   child: CircularProgressIndicator(
+                //     color: Colors.orangeAccent,
+                //   ),
+                // ),
                 Positioned(
                   top: 100,
                   child: Container(
